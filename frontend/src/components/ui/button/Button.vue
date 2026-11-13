@@ -1,24 +1,30 @@
 <script setup lang="ts">
 import type { PrimitiveProps } from 'reka-ui'
 import type { HTMLAttributes } from 'vue'
+import type { ButtonVariants } from '.'
 import { cn } from 'cn'
 import { Primitive } from 'reka-ui'
+import { buttonVariants } from '.'
 
 interface Props extends PrimitiveProps {
+  variant?: ButtonVariants['variant']
+  size?: ButtonVariants['size']
   class?: HTMLAttributes['class']
 }
 
 const props = withDefaults(defineProps<Props>(), {
-  as: 'div',
+  as: 'button',
 })
 </script>
 
 <template>
   <Primitive
-    data-slot="bubble-group"
+    data-slot="button"
+    :data-variant="variant"
+    :data-size="size"
     :as="as"
     :as-child="asChild"
-    :class="cn('gap-2 flex min-w-0 flex-col', props.class)"
+    :class="cn(buttonVariants({ variant, size }), props.class)"
   >
     <slot />
   </Primitive>

@@ -1,5 +1,5 @@
 {
-  "$schema": "https://shadcn-vue.com/schema.json",
+  "$schema": "./.vscode/shadcn-schema.json",
   "style": "reka-rhea",
   "font": "inter",
   "typescript": true,
