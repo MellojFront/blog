@@ -1,0 +1,37 @@
+
+html, body {
+  height: 100%;
+  margin: 0;
+}
+
+body {
+  display: flex !important;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.blog-layout {
+  display: grid;
+  grid-template-columns: 120px 1fr 160px;
+  gap: 1rem;
+  align-items: start;
+  flex: 1;
+  width: 100%;
+}
+
+.sidebar-left,
+.sidebar-right {
+  position: sticky;
+  top: 1rem;
+}
+
+/* Адаптив */
+@media (max-width: 992px) {
+  .blog-layout {
+    grid-template-columns: 1fr;
+  }
+  .sidebar-left,
+  .sidebar-right {
+    position: static;
+  }
+}

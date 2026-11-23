@@ -1,0 +1,50 @@
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="/static/css/pico.zinc.css" />
+    <link rel="stylesheet" href="/static/css/style.css" />
+    <script src="https://unpkg.com"></script>
+    <title>blog</title>
+  </head>
+  <body>
+    <header class="container">{% include "components/header.html" %}</header>
+
+    <div class="bg-zinc-900 container blog-layout">
+      {% include "components/sidebar_left.html" %}
+
+      <main id="main-content">{% block content %}{% endblock %}</main>
+
+      {% include "components/toc_right.html" %}
+    </div>
+
+    <footer class="container footer">
+      {% include "components/footer.html" %}
+    </footer>
+
+    <script>
+      const htmlEl = document.documentElement;
+      const toggleBtn = document.getElementById("theme-toggle");
+
+      // 1. При загрузке проверяем сохраненную тему (или берем системную)
+      const savedTheme = localStorage.getItem("theme");
+      if (savedTheme) {
+        htmlEl.setAttribute("data-theme", savedTheme);
+      }
+
+      // 2. По клику меняем dark <-> light и сохраняем в localStorage
+      toggleBtn.addEventListener("click", () => {
+        const current = htmlEl.getAttribute("data-theme");
+        const isDark =
+          current === "dark" ||
+          (!current &&
+            window.matchMedia("(prefers-color-scheme: dark)").matches);
+        const nextTheme = isDark ? "light" : "dark";
+
+        htmlEl.setAttribute("data-theme", nextTheme);
+        localStorage.setItem("theme", nextTheme);
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,27 @@
+<!-- templates/components/post_form.html -->
+<article>
+  <header>
+    <h2>Новая статья</h2>
+  </header>
+
+  <!-- HTMX отправит форму на бэкенд и заменит #main-content на созданную статью -->
+  <form hx-post="/posts" hx-target="#main-content">
+    <label for="title">
+      Заголовок
+      <input type="text" id="title" name="title" placeholder="Например: Как устроен FastAPI" required>
+    </label>
+
+    <label for="content">
+      Текст статьи
+      <textarea id="content" name="content" rows="10" placeholder="Напишите текст..." required></textarea>
+    </label>
+
+    <div class="grid">
+      <!-- Кнопка отмены возвращает текущую статью обратно -->
+      <button type="button" class="secondary" hx-get="/posts/latest" hx-target="#main-content">
+        Отмена
+      </button>
+      <button type="submit">Опубликовать</button>
+    </div>
+  </form>
+</article>

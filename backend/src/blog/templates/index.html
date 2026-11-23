@@ -1,33 +1,6 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>blog</title>
-</head>
-<body>
-    <header>
-        <div class="logo">
-            <p>heder</p>
-        </div>
-    </header>
-    <nav>
-        <div>
-        <p>nav</p>
-        </div>
-    </nav>
-    <main>
-        <div>
-            <p>main</p>
-        </div>
-    </main>
-    <div class="content-nav">
-        <p>content-nav</p>
-    </div>
-    <footer>
-        <div>
-            <p>footer</p>
-        </div>
-    </footer>
-</body>
-</html>
+<!-- templates/index.html -->
+{% extends "base.html" %}
+
+{% block content %}
+  {% include "components/article_view.html" %}
+{% endblock %}
