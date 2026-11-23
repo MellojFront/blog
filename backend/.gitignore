@@ -1,0 +1,31 @@
+# Environments
+.env
+.envrc
+.venv
+env/
+venv/
+ENV/
+env.bak/
+venv.bak/
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[codz]
+*$py.class
+
+# Build / Packaging
+build/
+dist/
+*.egg-info/
+.uv/
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+
+# IDEs & OS
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
