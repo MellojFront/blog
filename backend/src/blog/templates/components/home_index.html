@@ -1,0 +1,39 @@
+{% block content %}
+<section style="padding-block: 2rem 1rem;">
+  <hgroup>
+    <h1>Привет, я Melloj 👋</h1>
+    <p>Пишу код на Python и FastAPI, создаю музыку и делюсь опытом здесь.</p>
+  </hgroup>
+
+  <p>
+    Это мой личный цифровой уголок. Здесь собраны заметки о веб-разработке, 
+    эксперименты со звуком и полезные находки из ежедневной практики.
+  </p>
+
+  <div role="group" style="max-width: 400px;">
+    <a href="{{ url_for('posts_index') }}" role="button">Читать статьи</a>
+    <a href="{{ url_for('about_index') }}" role="button" class="outline secondary">О проекте</a>
+  </div>
+</section>
+
+<hr />
+
+<section>
+  <h3>Свежее в блоге</h3>
+  <div class="grid">
+    {% for post in latest_posts %}
+    <article>
+      <header>
+        <strong>{{ post.title }}</strong>
+        <br />
+        <small>{{ post.date_posted }}</small>
+      </header>
+      <p>{{ post.content[:140] }}...</p>
+      <footer>
+        <a href="{{ url_for('posts') }}">Перейти к чтению →</a>
+      </footer>
+    </article>
+    {% endfor %}
+  </div>
+</section>
+{% endblock %}

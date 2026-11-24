@@ -1,16 +1,17 @@
 <nav>
   <ul>
-    <li><strong>BLOG</strong></li>
+    <li><strong>Blog/basta</strong></li>
   </ul>
   <ul>
-    <li><a href="#" class="contrast">About</a></li>
-    <li><a href="#" class="contrast">Article</a></li>
+    <li><a href="{{url_for('home_index')}}" class="contrast">Home</a></li>
+    <li><a href="{{url_for('about_index')}}" class="contrast">About</a></li>
+    <li><a href="{{url_for('posts_index')}}" class="contrast">Article</a></li>
     <li>
       <button
         id="theme-toggle"
-        class="outline contrast"
+        class="outline contrast btn-borderless"
         aria-label="Сменить тему"
-        style="padding: 0.3rem 0.6rem"
+        style="padding: 0.1rem 0.2rem, "
       >
         🌓
       </button>

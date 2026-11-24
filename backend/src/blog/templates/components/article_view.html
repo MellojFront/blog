@@ -1,20 +1,22 @@
-<!-- templates/components/article_view.html -->
-{% if post %}
-  <article>
-    <header>
-      <hgroup>
-        <h1>{{ post.title }}</h1>
-        <p><small>Опубликовано: {{ post.created_at }}</small></p>
-      </hgroup>
-    </header>
+{% for post in posts %}
+<article>
+  <header>
+    <hgroup>
+      <h1>{{ post.title }}</h1>
+      <p><small>Автор: {{ post.autor }} • Опубликовано: {{ post.date_posted }}</small></p>
+    </hgroup>
+  </header>
 
-    <!-- Текст статьи (safe нужен, если внутри будут HTML-теги заголовков для оглавления) -->
-    <div class="article-body">
-      {{ post.content | safe }}
+  <div>{{ post.content }}</div>
+
+  {% if post.tag %}
+  <footer>
+    <div class="post-tags">
+      {% for t in post.tag %}
+        <a href="/?tag={{ t }}"><small>#{{ t }}</small></a>
+      {% endfor %}
     </div>
-  </article>
-{% else %}
-  <article>
-    <p>Пока нет ни одной статьи. Нажмите «Новая статья», чтобы написать первую!</p>
-  </article>
-{% endif %}
+  </footer>
+  {% endif %}
+</article>
+{% endfor %}
