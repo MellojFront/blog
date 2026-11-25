@@ -1,0 +1,63 @@
+<dialog id="create-post-modal">
+    <article style="max-width: 860px; width: 95%;">
+        <header>
+            <button aria-label="Close" rel="prev" onclick="document.getElementById('create-post-modal').close()"></button>
+            <strong>Новый пост</strong>
+        </header>
+
+        <form action="/posts" method="post">
+            <!-- Название поста -->
+            <input type="text" name="title" placeholder="Введите название поста..." required>
+
+            <!-- Панель редакции (заготовка) -->
+            <div style="display: flex; gap: 0.5rem; padding: 0.5rem; background: var(--pico-card-sectioning-background-color); border: 1px solid var(--pico-form-element-border-color); border-bottom: none; border-radius: var(--pico-border-radius) var(--pico-border-radius) 0 0;">
+                <button type="button" class="outline secondary" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" disabled>B</button>
+                <button type="button" class="outline secondary" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" disabled>I</button>
+                <button type="button" class="outline secondary" style="padding: 0.2rem 0.5rem; font-size: 0.8rem;" disabled>Code</button>
+                <small style="margin-left: auto; align-self: center; color: var(--pico-muted-color);">HTML / MD (скоро)</small>
+            </div>
+
+            <!-- Текст поста: фиксированный размер, ширина ~80 символов, прокрутка -->
+            <textarea 
+                name="content" 
+                placeholder="Текст поста..." 
+                style="width: 100%; max-width: 82ch; height: 250px; resize: none; overflow-y: auto; font-family: monospace; border-top-left-radius: 0; border-top-right-radius: 0;" 
+                required></textarea>
+
+            <!-- Поле тегов -->
+            <input type="text" id="tags-input" name="tags" placeholder="Добавьте теги через запятую">
+            
+            <!-- Шаблоны тегов -->
+            <div style="display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1rem; align-items: center;">
+                <small style="margin-right: 0.3rem;">Шаблоны:</small>
+                <button type="button" class="outline secondary" style="padding: 0.15rem 0.5rem; font-size: 0.8rem;" onclick="addTag('python')">+ python</button>
+                <button type="button" class="outline secondary" style="padding: 0.15rem 0.5rem; font-size: 0.8rem;" onclick="addTag('fastapi')">+ fastapi</button>
+                <button type="button" class="outline secondary" style="padding: 0.15rem 0.5rem; font-size: 0.8rem;" onclick="addTag('заметки')">+ заметки</button>
+            </div>
+
+            <!-- Кнопка отправки справа внизу -->
+            <footer style="display: flex; justify-content: flex-end;">
+                <button type="submit" style="width: auto; margin-bottom: 0;">Создать пост</button>
+            </footer>
+        </form>
+    </article>
+</dialog>
+
+<script>
+    const modal = document.getElementById('create-post-modal');
+    
+    // Закрытие при клике на тёмный фон вокруг модалки
+    modal.addEventListener('click', (e) => {
+        if (e.target === modal) modal.close();
+    });
+
+    // Подстановка тега по клику
+    function addTag(tag) {
+        const input = document.getElementById('tags-input');
+        const tags = input.value.split(',').map(t => t.trim()).filter(Boolean);
+        if (!tags.includes(tag)) {
+            tags.push(tag);
+            input.value = tags.join(', ');
+        }
+    }
+</script>

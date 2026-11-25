@@ -1,10 +1,15 @@
+from collections import Counter
+from datetime import datetime
 from pathlib import Path
-from fastapi import FastAPI, Request
+
+from .db import DB
+from fastapi import Depends, FastAPI, Form, Request
+from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
-from collections import Counter
 
 BASE_DIR = Path(__file__).resolve().parent
+DB_PATH = BASE_DIR / "posts_db.db"
 
 app = FastAPI()
 
@@ -12,33 +17,22 @@ app.mount("/static", StaticFiles(directory=BASE_DIR / "static"), name="static")
 templates = Jinja2Templates(directory=BASE_DIR / "templates")
 
 
-posts: list[dict] = [
-    {
-        "id": 1,
-        "autor": "melloj",
-        "title": "FastAPI for beginers",
-        "content": "This is framework is really easy d to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programmincians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musiciad to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programminns and dj producersMethod to work programming to use musicians and dj producersMethod to work programmin",
-        "tag": ["API", "Web", "Beginers"],
-        "date_posted": "April 20, 2025",
-    },
-    {
-        "id": 2,
-        "autor": "melloj",
-        "title": "Music in programming",
-        "content": "Method to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producersMethod to work programming to use musicians and dj producers",
-        "tag": ["Programming", "Music"],
-        "date_posted": "September 20, 2026",
-    },
-]
+def get_db():
+    with DB(str(DB_PATH)) as db:
+        yield db
 
 
 @app.get("/", include_in_schema=False)
-async def home_index(request: Request):
-    return templates.TemplateResponse(request, "index.html", {"title": "Home", "latest_post": posts[:2]})
+async def home_index(request: Request, db: DB = Depends(get_db)):
+    post = db.get_posts()
+    return templates.TemplateResponse(
+        request, "index.html", {"title": "Home", "latest_post": post[:2]}
+    )
 
 
 @app.get("/posts", include_in_schema=False)
-async def posts_index(request: Request, tag: str | None = None, q: str | None = None):
+async def posts_index(request: Request, tag: str | None = None, q: str | None = None, db: DB = Depends(get_db)):
+    posts =db.get_posts()
     tag_counts = dict(
         sorted(Counter(t for post in posts for t in post.get("tag", [])).items())
     )
@@ -60,9 +54,23 @@ async def posts_index(request: Request, tag: str | None = None, q: str | None = 
             "title": "Посты",
             "posts": filter_posts,
             "tags": tag_counts,
-            "search_query": q
+            "search_query": q,
         },
     )
+
+
+@app.post("/posts", include_in_schema=False)
+async def create_post(
+    title: str = Form(...),
+    content: str = Form(...),
+    tags: str = Form(""),
+    db: DB = Depends(get_db),
+):
+    tags_list = [t.strip() for t in tags.split(",") if t.strip()]
+    date_str = datetime.now().strftime("%B %d, %Y")
+
+    db.add_post(title=title, content=content, data_posted=date_str, tags=tags_list)
+    return RedirectResponse(url="/posts", status_code=303)
 
 
 @app.get("/about", include_in_schema=False)
@@ -71,5 +79,5 @@ async def about_index(request: Request):
 
 
 @app.get("/api/posts")
-async def get_posts():
-    return posts
+async def get_posts(db: DB = Depends(get_db)):
+    return db.get_posts()

@@ -1,9 +1,14 @@
+<div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
+    <button onclick="document.getElementById('create-post-modal').showModal()">
+        + Добавить пост
+    </button>
+</div>
 {% for post in posts %}
 <article>
   <header>
     <hgroup>
       <h1>{{ post.title }}</h1>
-      <p><small>Автор: {{ post.autor }} • Опубликовано: {{ post.date_posted }}</small></p>
+      <p><small>Автор: {{ post.author }} • Опубликовано: {{ post.date_posted }}</small></p>
     </hgroup>
   </header>
 
