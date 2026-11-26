@@ -1,0 +1,54 @@
+{% extends "base.html" %} {% block content %}
+<div style="margin-bottom: 1rem">
+  <a href="/posts" role="button" class="outline secondary">← Назад к статьям</a>
+</div>
+
+<article>
+  <header>
+    <div class="post-author-header">
+      <img
+        src="{{ post.avatar or '/static/img/default-avatar.jpg' }}"
+        alt="{{ post.author }}"
+        class="post-avatar"
+      />
+      <hgroup style="margin-bottom: 0">
+        <h1 title="{{ post.title }}">{{ post.title }}</h1>
+        <p>
+          <small
+            >Автор: {{ post.author }} • Опубликовано: {{ post.date_posted
+            }}</small
+          >
+        </p>
+      </hgroup>
+    </div>
+  </header>
+
+  <div>{{ post.content | md }}</div>
+
+  <footer>
+    {% if post.tag %}
+    <div style="margin-bottom: 1rem">
+      {% include "components/tags.html" %}
+    </div>
+    {% endif %}
+
+    <div style="display: flex; gap: 0.5rem; justify-content: flex-end">
+      <button
+        class="secondary"
+        onclick="document.getElementById('edit-post-modal').showModal()"
+      >
+        Редактировать
+      </button>
+
+      <button
+        class="contrast"
+        onclick="document.getElementById('delete-post-modal').showModal()"
+      >
+        Удалить
+      </button>
+    </div>
+  </footer>
+</article>
+{% include "components/modal_edit_delete.html" %}
+{% include "components/modal_delete.html" %}
+{% endblock %}

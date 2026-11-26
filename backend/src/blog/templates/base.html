@@ -3,26 +3,26 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link rel="stylesheet" href="/static/css/pico.zinc.css" />
-    <link rel="stylesheet" href="/static/css/style.css" />
-    <script src="https://unpkg.com"></script>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/pico.zinc.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', path='css/style.css') }}"
+    />
     <title>{% block title %}{% endblock %}</title>
   </head>
   <body>
-    <header class="container">
-      {% include "components/header.html" %} 
-    </header>
+    <header class="container">{% include "components/header.html" %}</header>
     <div class="container-fluid">
-      <main class="container">
-        {% block content %}
-        
-        {% endblock %}
-      </main>
+      <main class="container">{% block content %} {% endblock %}</main>
     </div>
     <footer class="container footer">
-      {% include "components/footer.html" %} 
+      {% include "components/footer.html" %}
     </footer>
     <script>
+      // 1. Переключение темы
       const htmlEl = document.documentElement;
       const toggleBtn = document.getElementById("theme-toggle");
 
@@ -31,17 +31,204 @@
         htmlEl.setAttribute("data-theme", savedTheme);
       }
 
-      toggleBtn.addEventListener("click", () => {
-        const current = htmlEl.getAttribute("data-theme");
-        const isDark =
-          current === "dark" ||
-          (!current &&
-            window.matchMedia("(prefers-color-scheme: dark)").matches);
-        const nextTheme = isDark ? "light" : "dark";
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", () => {
+          const current = htmlEl.getAttribute("data-theme");
+          const isDark =
+            current === "dark" ||
+            (!current &&
+              window.matchMedia("(prefers-color-scheme: dark)").matches);
+          const nextTheme = isDark ? "light" : "dark";
 
-        htmlEl.setAttribute("data-theme", nextTheme);
-        localStorage.setItem("theme", nextTheme);
+          htmlEl.setAttribute("data-theme", nextTheme);
+          localStorage.setItem("theme", nextTheme);
+        });
+      }
+
+      // 2. Редактор текста (Obsidian style)
+      function applyWrap(textarea, openTag, closeTag) {
+        const start = textarea.selectionStart;
+        const end = textarea.selectionEnd;
+        const selected = textarea.value.substring(start, end) || "текст";
+        textarea.setRangeText(
+          openTag + selected + closeTag,
+          start,
+          end,
+          "select",
+        );
+        textarea.setSelectionRange(
+          start + openTag.length,
+          start + openTag.length + selected.length,
+        );
+        textarea.focus();
+      }
+
+      function mdAction(btn, openTag, closeTag) {
+        const editor = btn.closest(".obsidian-editor");
+        const textarea = editor.querySelector("textarea");
+        if (textarea.style.display === "none") {
+          toggleObsidianPreview(editor.querySelector(".preview-toggle"));
+        }
+        applyWrap(textarea, openTag, closeTag);
+      }
+
+      function mdHotkeys(e, textarea) {
+        if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "b") {
+          e.preventDefault();
+          applyWrap(textarea, "**", "**");
+        } else if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === "i") {
+          e.preventDefault();
+          applyWrap(textarea, "*", "*");
+        }
+      }
+
+      async function toggleObsidianPreview(btn) {
+        const editor = btn.closest(".obsidian-editor");
+        const textarea = editor.querySelector("textarea");
+        const preview = editor.querySelector(".editor-preview");
+        const isPreview = preview.style.display === "block";
+
+        if (isPreview) {
+          preview.style.display = "none";
+          textarea.style.display = "block";
+          btn.classList.remove("active-preview");
+          textarea.focus();
+        } else {
+          const formData = new FormData();
+          formData.append("content", textarea.value || "*Пусто...*");
+          const res = await fetch("/api/preview", {
+            method: "POST",
+            body: formData,
+          });
+          preview.innerHTML = await res.text();
+
+          textarea.style.display = "none";
+          preview.style.display = "block";
+          btn.classList.add("active-preview");
+        }
+      }
+
+      // 3. Интерактивные теги-капсулы
+      const TAG_PALETTE = [
+        ["#16a34a", "#ffffff"],
+        ["#2563eb", "#ffffff"],
+        ["#9333ea", "#ffffff"],
+        ["#d97706", "#ffffff"],
+        ["#db2777", "#ffffff"],
+        ["#0d9488", "#ffffff"],
+      ];
+
+      function getTagStyle(name) {
+        let sum = 0;
+        for (let i = 0; i < name.length; i++) sum += name.charCodeAt(i);
+        const [bg, fg] = TAG_PALETTE[sum % TAG_PALETTE.length];
+        return `background-color: ${bg}; color: ${fg};`;
+      }
+
+      function renderTagPills(wrapper) {
+        const hidden = wrapper.querySelector('input[type="hidden"]');
+        const container = wrapper.querySelector(".tags-pills-container");
+        const tags = hidden.value
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        container.innerHTML = "";
+        tags.forEach((tag) => {
+          const pill = document.createElement("span");
+          pill.className = "tag-pill";
+          pill.style.cssText = getTagStyle(tag);
+          pill.innerHTML = `${tag} <span class="tag-remove-btn" onclick="removeTag(this, '${tag}')">×</span>`;
+          container.appendChild(pill);
+        });
+      }
+
+      function addTagFromInput(input) {
+        const raw = input.value.replace(/,/g, "").trim().toLowerCase();
+        if (!raw) return;
+
+        const wrapper = input.closest(".tags-input-wrapper");
+        const hidden = wrapper.querySelector('input[type="hidden"]');
+        const tags = hidden.value
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        if (!tags.includes(raw)) {
+          tags.push(raw);
+          hidden.value = tags.join(",");
+          renderTagPills(wrapper);
+        }
+        input.value = "";
+      }
+
+      function selectSuggestedTag(btn, tagName) {
+        const wrapper = btn.closest(".tag-suggestions").previousElementSibling;
+        const hidden = wrapper.querySelector('input[type="hidden"]');
+        const tags = hidden.value
+          .split(",")
+          .map((t) => t.trim())
+          .filter(Boolean);
+
+        if (!tags.includes(tagName)) {
+          tags.push(tagName);
+          hidden.value = tags.join(",");
+          renderTagPills(wrapper);
+        }
+      }
+
+      function removeTag(btn, tagToRemove) {
+        const wrapper = btn.closest(".tags-input-wrapper");
+        const hidden = wrapper.querySelector('input[type="hidden"]');
+        const tags = hidden.value
+          .split(",")
+          .map((t) => t.trim())
+          .filter((t) => t && t !== tagToRemove);
+        hidden.value = tags.join(",");
+        renderTagPills(wrapper);
+      }
+
+      function handleTagKey(e, input) {
+        if (e.key === "Enter" || e.key === ",") {
+          e.preventDefault();
+          addTagFromInput(input);
+        } else if (e.key === "Backspace" && !input.value) {
+          const wrapper = input.closest(".tags-input-wrapper");
+          const hidden = wrapper.querySelector('input[type="hidden"]');
+          const tags = hidden.value
+            .split(",")
+            .map((t) => t.trim())
+            .filter(Boolean);
+          tags.pop();
+          hidden.value = tags.join(",");
+          renderTagPills(wrapper);
+        }
+      }
+
+      document.addEventListener("focusout", (e) => {
+        if (e.target.matches('.tags-input-wrapper input[type="text"]')) {
+          addTagFromInput(e.target);
+        }
       });
+
+      document.addEventListener("submit", (e) => {
+        const tagInput = e.target.querySelector(
+          '.tags-input-wrapper input[type="text"]',
+        );
+        if (tagInput) addTagFromInput(tagInput);
+      });
+
+      function initAllTagInputs() {
+        document
+          .querySelectorAll(".tags-input-wrapper")
+          .forEach(renderTagPills);
+      }
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", initAllTagInputs);
+      } else {
+        initAllTagInputs();
+      }
     </script>
   </body>
 </html>

@@ -1,3 +1,12 @@
+:root {
+  --app-rss-bg: #d97706;
+  --app-tag-bg: #173577;
+  --app-badge-text: #ffffff;
+  --app-badge-radius: 3px;
+  --app-avatar-size: 56px;
+  --app-modal-max-width: 900px;
+}
+
 .btn-borderless {
   border: none;
   --pico-outline-width: 0;
@@ -13,7 +22,17 @@ body > .container-fluid {
   flex: 1;
 }
 
+body > footer {
+  text-align: center;
+  padding-block: 1.5rem;
+  color: var(--pico-muted-color);
+}
 
+.text-center {
+  text-align: center;
+}
+
+/* Сетка блога и сайдбар */
 .blog-layout {
   display: grid;
   grid-template-columns: minmax(0, 3fr) minmax(250px, 1fr);
@@ -27,9 +46,7 @@ body > .container-fluid {
   }
 }
 
-.sidebar form {
-  margin-bottom: 0;
-}
+.sidebar form,
 .sidebar input[type="search"] {
   margin-bottom: 0;
 }
@@ -44,35 +61,227 @@ body > .container-fluid {
   display: flex;
   align-items: center;
   gap: 0.45rem;
-  margin-bottom: 0.1rem; 
-  line-height: 0.5;      
+  margin-bottom: 0.1rem;
+  line-height: 0.5;
   list-style: none;
 }
-
 
 .categories-list li:last-child {
   margin-bottom: 0;
 }
 
+/* Бейджи RSS и тегов */
 .rss-badge {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background-color: #d97706;
-  color: #fff;
+  background-color: var(--app-rss-bg);
+  color: var(--app-badge-text);
   width: 20px;
   height: 20px;
-  border-radius: 3px;
+  border-radius: var(--app-badge-radius);
   text-decoration: none;
 }
 
 .tag-badge {
-  background-color: #173577;
-  color: #fff;
-  padding: 0.4rem 0.45rem; 
-  border-radius: 3px;
+  background-color: var(--app-tag-bg);
+  color: var(--app-badge-text);
+  padding: 0.4rem 0.45rem;
+  border-radius: var(--app-badge-radius);
   font-size: 0.6rem;
   font-weight: 500;
   line-height: 1;
   text-decoration: none;
+}
+
+/* Аватар поста и обрезка заголовка */
+.post-author-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.post-avatar {
+  width: var(--app-avatar-size);
+  height: var(--app-avatar-size);
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+
+.post-author-header hgroup {
+  min-width: 0;
+  flex: 1;
+}
+
+.post-author-header h1 {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Редактор в стиле Obsidian */
+.obsidian-editor {
+  border: 1px solid var(--pico-form-element-border-color);
+  border-radius: var(--pico-border-radius);
+  background: var(--pico-form-element-background-color);
+  margin-bottom: 1rem;
+  overflow: hidden;
+}
+
+.obsidian-editor .editor-toolbar {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  padding: 0.4rem 0.6rem;
+  border-bottom: 1px solid var(--pico-form-element-border-color);
+  background: rgba(255, 255, 255, 0.02);
+}
+
+.obsidian-editor .editor-toolbar button {
+  padding: 0.3rem 0.5rem;
+  margin: 0;
+  border: none;
+  width: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.obsidian-editor textarea {
+  border: none !important;
+  box-shadow: none !important;
+  margin-bottom: 0 !important;
+  border-radius: 0;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.obsidian-editor .toolbar-divider {
+  width: 1px;
+  background-color: var(--pico-form-element-border-color);
+  margin: 0.15rem 0.2rem;
+  align-self: stretch;
+}
+
+/* Область предпросмотра */
+.obsidian-editor .editor-preview {
+  padding: 0.75rem 1rem;
+  min-height: 215px;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.obsidian-editor .preview-toggle.active-preview {
+  background-color: var(--pico-primary-background);
+  color: var(--pico-primary-inverse);
+}
+
+/* Ширина модальных окон редактора */
+#create-post-modal article,
+#edit-post-modal article {
+  width: 90%;
+  max-width: var(--app-modal-max-width);
+}
+
+/* tags */
+.tag-pill {
+  background-color: var(--tag-bg, #16a34a);
+  color: #ffffff;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px; 
+  font-size: 0.8rem;
+  font-weight: 500;
+  line-height: 1.2;
+  text-decoration: none;
+  transition: opacity 0.15s ease;
+}
+
+.tag-pill:hover {
+  opacity: 0.85;
+  text-decoration: none;
+}
+
+.post-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+
+/* Поле ввода тегов с капсулами внутри */
+.tags-input-wrapper {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--pico-form-element-border-color);
+  border-radius: var(--pico-border-radius);
+  background: var(--pico-form-element-background-color);
+  margin-bottom: 1rem;
+  cursor: text;
+}
+
+.tags-input-wrapper:focus-within {
+  border-color: var(--pico-form-element-focus-color);
+  box-shadow: 0 0 0 var(--pico-outline-width) var(--pico-form-element-focus-color);
+}
+
+.tags-pills-container {
+  display: contents;
+}
+
+.tags-input-wrapper input[type="text"] {
+  border: none !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  padding: 0.15rem 0 !important;
+  margin: 0 !important;
+  height: auto !important;
+  width: auto !important;
+  flex: 1;
+  min-width: 180px;
+}
+
+.tag-remove-btn {
+  cursor: pointer;
+  font-weight: bold;
+  opacity: 0.8;
+  margin-left: 0.15rem;
+}
+
+.tag-remove-btn:hover {
+  opacity: 1;
+}
+
+
+.tag-suggestions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.35rem;
+  margin-top: -0.5rem;
+  margin-bottom: 1rem;
+}
+
+.tag-suggestion-btn {
+  width: auto !important;
+  padding: 0.15rem 0.55rem !important;
+  margin: 0 !important;
+  font-size: 0.75rem !important;
+  border-radius: 9999px !important;
+  background-color: transparent;
+  border: 1px dashed var(--pico-form-element-border-color);
+  color: var(--pico-muted-color);
+  cursor: pointer;
+}
+
+.tag-suggestion-btn:hover {
+  border-color: var(--pico-primary);
+  color: var(--pico-primary);
 }

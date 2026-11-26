@@ -1,0 +1,9 @@
+{% if post.tag %}
+<div class="post-tags">
+  {% for t in post.tag %}
+    <a href="/posts?tag={{ t }}" class="tag-pill" style="--tag-bg: {{ t | tag_color }};">
+      {{ t }}
+    </a>
+  {% endfor %}
+</div>
+{% endif %}

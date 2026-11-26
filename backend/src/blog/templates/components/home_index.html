@@ -10,30 +10,18 @@
     эксперименты со звуком и полезные находки из ежедневной практики.
   </p>
 
-  <div role="group" style="max-width: 400px;">
+  <div style="display: flex; gap: 0.75rem; flex-wrap: wrap; margin-top: 1.5rem;">
     <a href="{{ url_for('posts_index') }}" role="button">Читать статьи</a>
     <a href="{{ url_for('about_index') }}" role="button" class="outline secondary">О проекте</a>
   </div>
+
 </section>
 
 <hr />
 
 <section>
-  <h3>Свежее в блоге</h3>
-  <div class="grid">
-    {% for post in latest_posts %}
-    <article>
-      <header>
-        <strong>{{ post.title }}</strong>
-        <br />
-        <small>{{ post.date_posted }}</small>
-      </header>
-      <p>{{ post.content[:140] }}...</p>
-      <footer>
-        <a href="{{ url_for('posts') }}">Перейти к чтению →</a>
-      </footer>
-    </article>
-    {% endfor %}
-  </div>
+{% include "components/latest_post.html" %}
 </section>
+{% include "components/home_now.html" %}
+
 {% endblock %}

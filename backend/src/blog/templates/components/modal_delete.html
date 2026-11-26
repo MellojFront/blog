@@ -1,0 +1,32 @@
+<dialog id="delete-post-modal">
+  <article>
+    <header>
+      <button
+        aria-label="Close"
+        rel="prev"
+        onclick="document.getElementById('delete-post-modal').close()"
+      ></button>
+      <h3>Удалить статью?</h3>
+    </header>
+    <p>
+      Вы уверены, что хотите удалить статью <strong>«{{ post.title }}»</strong>?
+      Это действие нельзя отменить.
+    </p>
+    <footer style="display: flex; gap: 0.5rem; justify-content: flex-end">
+      <button
+        type="button"
+        class="secondary"
+        onclick="document.getElementById('delete-post-modal').close()"
+      >
+        Отмена
+      </button>
+      <form
+        action="/posts/{{ post.id }}/delete"
+        method="post"
+        style="margin: 0"
+      >
+        <button type="submit" class="contrast">Да, удалить</button>
+      </form>
+    </footer>
+  </article>
+</dialog>

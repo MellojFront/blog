@@ -1,24 +1,41 @@
-<div style="display: flex; justify-content: flex-end; margin-bottom: 1rem;">
-    <button onclick="document.getElementById('create-post-modal').showModal()">
-        + Добавить пост
-    </button>
+<div style="display: flex; justify-content: flex-end; margin-bottom: 1rem">
+  <button onclick="document.getElementById('create-post-modal').showModal()">
+    + Добавить пост
+  </button>
 </div>
+
 {% for post in posts %}
 <article>
   <header>
-    <hgroup>
-      <h1>{{ post.title }}</h1>
-      <p><small>Автор: {{ post.author }} • Опубликовано: {{ post.date_posted }}</small></p>
-    </hgroup>
+    <div class="post-author-header">
+      <img
+        src="{{ post.avatar or '/static/img/default-avatar.jpg' }}"
+        alt="{{ post.author }}"
+        class="post-avatar"
+      />
+      <hgroup style="margin-bottom: 0">
+        <h1 title="{{ post.title }}">
+          <a href="{{ url_for('post_page', post_id=post.id) }}"
+            >{{ post.title }}</a
+          >
+        </h1>
+        <p>
+          <small
+            >Автор: {{ post.author }} • Опубликовано: {{ post.date_posted
+            }}</small
+          >
+        </p>
+      </hgroup>
+    </div>
   </header>
 
-  <div>{{ post.content }}</div>
+  <div>{{ post.content | md }}</div>
 
   {% if post.tag %}
   <footer>
     <div class="post-tags">
       {% for t in post.tag %}
-        <a href="/?tag={{ t }}"><small>#{{ t }}</small></a>
+      {% include "components/tags.html" %}
       {% endfor %}
     </div>
   </footer>

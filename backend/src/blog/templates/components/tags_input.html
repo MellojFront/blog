@@ -1,0 +1,16 @@
+<div class="tags-input-wrapper" onclick="this.querySelector('input[type=text]').focus()">
+  <div class="tags-pills-container"></div>
+  <input type="text" placeholder="Введите тег и нажмите Enter или запятую..." onkeydown="handleTagKey(event, this)" />
+  <input type="hidden" name="tags" value="{{ initial_tags or '' }}" />
+</div>
+
+{% if all_tags %}
+<div class="tag-suggestions">
+  <small style="color: var(--pico-muted-color);">Подсказки:</small>
+  {% for tag in all_tags %}
+    <button type="button" class="tag-suggestion-btn" onclick="selectSuggestedTag(this, '{{ tag }}')">
+      + {{ tag }}
+    </button>
+  {% endfor %}
+</div>
+{% endif %}

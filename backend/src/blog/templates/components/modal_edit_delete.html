@@ -1,0 +1,32 @@
+<dialog id="edit-post-modal">
+  <article>
+    <header>
+      <button
+        aria-label="Close"
+        rel="prev"
+        onclick="document.getElementById('edit-post-modal').close()"
+      ></button>
+      <h3>Редактировать статью</h3>
+    </header>
+    <form action="/posts/{{ post.id }}/edit" method="post">
+      <input type="text" name="title" value="{{ post.title }}" required />
+
+      {% set initial_content = post.content %}
+      {% include "components/md_editor.html" %}
+
+      {% set initial_tags = post.tag | join(',') if post.tag else '' %}
+      {% include "components/tags_input.html" %}
+
+      <footer>
+        <button
+          type="button"
+          class="secondary"
+          onclick="document.getElementById('edit-post-modal').close()"
+        >
+          Отмена
+        </button>
+        <button type="submit">Сохранить</button>
+      </footer>
+    </form>
+  </article>
+</dialog>

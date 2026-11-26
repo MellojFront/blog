@@ -126,3 +126,34 @@ class DB:
                 }
             )
         return result
+
+    def update_post(self, post_id: int, title: str, content: str, tags: list[str]) -> None:
+        if self.con is None:
+            raise RuntimeError(__ERROR_DB)
+
+        self.con.execute(
+            "UPDATE posts SET title = ?, content = ? WHERE id = ?",
+            (title, content, post_id),
+        )
+
+        self.con.execute("DELETE FROM post_tags WHERE post_id = ?", (post_id,))
+
+        clean_tags = {tag.strip().lower() for tag in tags if tag.strip()}
+        for tag in clean_tags:
+            self.con.execute("INSERT OR IGNORE INTO tags (name) VALUES (?)", (tag,))
+            tag_row = self.con.execute(
+                "SELECT id FROM tags WHERE name = ?", (tag,)
+            ).fetchone()
+            self.con.execute(
+                "INSERT INTO post_tags (post_id, tag_id) VALUES (?, ?)",
+                (post_id, tag_row["id"]),
+            )
+        self.con.execute("DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT tag_id FROM post_tags)")
+
+
+    def delete_post(self, post_id: int) -> None:
+        if self.con is None:
+            raise RuntimeError(__ERROR_DB)
+        self.con.execute("DELETE FROM posts WHERE id = ?", (post_id,))
+        self.con.execute("DELETE FROM tags WHERE id NOT IN (SELECT DISTINCT tag_id FROM post_tags)")
+
